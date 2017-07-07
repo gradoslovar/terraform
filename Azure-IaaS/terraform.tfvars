@@ -1,5 +1,0 @@
-azurerm_client_id = "73be97d0-34ea-4edc-b2ca-3f51a33d73e1"
-azurerm_client_secret = "DNm11i22-dt3ft"
-azurerm_subscription_id = "07dd3def-975e-4933-8a0b-5baf4fd2b88f"
-azurerm_tenant_id = "f846780e-1f26-4cfe-a174-6d6b3da2dafe"
-azurerm_vm_admin_password = "DNm11i22-dt3ft"
