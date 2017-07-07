@@ -36,3 +36,8 @@ variable "azurerm_vm_admin_password" {
   type = "string"
   default = "DNm11i22-dt3ft"
 }
+
+# variable "address_space" {
+#   description = "Addres space for Azure VM network"
+#   default = "192.168.2.0/24"
+# }

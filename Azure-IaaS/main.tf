@@ -13,7 +13,7 @@ resource "azurerm_resource_group" "tfdemo" {
 resource "azurerm_virtual_network" "tfvnet" {
     name = "vnet-demo"
     address_space = ["192.168.2.0/24"]
-    # addres_space = ["${var.config["address_prefix"]}"]
+    # address_space = ["${var.address_space}"]
     location = "${var.azurerm_location}"
     resource_group_name = "${azurerm_resource_group.tfdemo.name}"
 }
@@ -42,6 +42,7 @@ resource "azurerm_network_interface" "tfinterface" {
         name = "demo-ip-${count.index}"
         subnet_id = "${azurerm_subnet.tfsubnet1.id}"
         private_ip_address_allocation = "dynamic"
+        # the following resource will be created below in the script
         load_balancer_backend_address_pools_ids = ["${azurerm_lb_backend_address_pool.tfbendpool.id}"]
     }
 }
@@ -150,3 +151,8 @@ resource "azurerm_virtual_machine" "tfvm" {
         disable_password_authentication = false
     }
 }
+
+output "public_ip" {
+    value = "${azurerm_public_ip}"
+}
+
