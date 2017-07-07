@@ -151,8 +151,3 @@ resource "azurerm_virtual_machine" "tfvm" {
         disable_password_authentication = false
     }
 }
-
-output "public_ip" {
-    value = "${azurerm_public_ip}"
-}
-
