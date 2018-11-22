@@ -1,153 +1,151 @@
+# Configure the Microsoft Azure Provider
 provider "azurerm" {
-    client_id = "${var.azurerm_client_id}"
-    client_secret = "${var.azurerm_client_secret}"
     subscription_id = "${var.azurerm_subscription_id}"
-    tenant_id = "${var.azurerm_tenant_id}"
+    client_id       = "${var.azurerm_client_id}"
+    client_secret   = "${var.azurerm_client_secret}"
+    tenant_id       = "${var.azurerm_tenant_id}"
 }
 
-resource "azurerm_resource_group" "tfdemo" {
-    name = "TerraForm-Demo"
+# Create a resource group if it doesn’t exist
+resource "azurerm_resource_group" "group" {
+    name     = "${var.azurerm_resource_group}"
     location = "${var.azurerm_location}"
+
+    tags {
+        environment = "${var.azurerm_resource_tag}"
+    }
 }
 
-resource "azurerm_virtual_network" "tfvnet" {
-    name = "vnet-demo"
-    address_space = ["192.168.2.0/24"]
-    # address_space = ["${var.address_space}"]
-    location = "${var.azurerm_location}"
-    resource_group_name = "${azurerm_resource_group.tfdemo.name}"
+# Create virtual network
+resource "azurerm_virtual_network" "vnet" {
+    name                = "${var.vnet_name}"
+    address_space       = ["${var.vnet_address_space}"]
+    location            = "${azurerm_resource_group.group.location}"
+    resource_group_name = "${azurerm_resource_group.group.name}"
+
+    tags {
+        environment = "Terraform Demo"
+    }
 }
 
-resource "azurerm_subnet" "tfsubnet1" {
-    name = "tf-subnet-1"
-    resource_group_name = "${azurerm_resource_group.tfdemo.name}"
-    virtual_network_name = "${azurerm_virtual_network.tfvnet.name}"
-    address_prefix = "192.168.2.16/28"
+# Create subnet
+resource "azurerm_subnet" "vnetsubnet" {
+    name                 = "${var.vnet_subnet_name}"
+    resource_group_name  = "${azurerm_resource_group.group.name}"
+    virtual_network_name = "${azurerm_virtual_network.vnet.name}"
+    address_prefix       = "${var.vnet_subnet_address_space}"
 }
 
+# Create public IPs
 resource "azurerm_public_ip" "publicip" {
-    name = "tf-public-ip"
-    location = "${var.azurerm_location}"
-    resource_group_name = "${azurerm_resource_group.tfdemo.name}"
-    public_ip_address_allocation = "static"
+    name                         = "myPublicIP"
+    location                     = "eastus"
+    resource_group_name          = "${azurerm_resource_group.group.name}"
+    public_ip_address_allocation = "dynamic"
+
+    tags {
+        environment = "Terraform Demo"
+    }
 }
 
-resource "azurerm_network_interface" "tfinterface" {
-    count = "${var.azurerm_instances}"
-    name = "tf-interface-${count.index}"
-    location = "${var.azurerm_location}"
-    resource_group_name = "${azurerm_resource_group.tfdemo.name}"
+# Create Network Security Group and rule
+resource "azurerm_network_security_group" "myterraformnsg" {
+    name                = "myNetworkSecurityGroup"
+    location            = "eastus"
+    resource_group_name = "${azurerm_resource_group.group.name}"
+
+    security_rule {
+        name                       = "SSH"
+        priority                   = 1001
+        direction                  = "Inbound"
+        access                     = "Allow"
+        protocol                   = "Tcp"
+        source_port_range          = "*"
+        destination_port_range     = "22"
+        source_address_prefix      = "*"
+        destination_address_prefix = "*"
+    }
+
+    tags {
+        environment = "Terraform Demo"
+    }
+}
+
+# Create network interface
+resource "azurerm_network_interface" "myterraformnic" {
+    name                      = "myNIC"
+    location                  = "eastus"
+    resource_group_name       = "${azurerm_resource_group.group.name}"
+    network_security_group_id = "${azurerm_network_security_group.myterraformnsg.id}"
 
     ip_configuration {
-        name = "demo-ip-${count.index}"
-        subnet_id = "${azurerm_subnet.tfsubnet1.id}"
+        name                          = "myNicConfiguration"
+        subnet_id                     = "${azurerm_subnet.myterraformsubnet.id}"
         private_ip_address_allocation = "dynamic"
-        # the following resource will be created below in the script
-        load_balancer_backend_address_pools_ids = ["${azurerm_lb_backend_address_pool.tfbendpool.id}"]
+        public_ip_address_id          = "${azurerm_public_ip.publicip.id}"
+    }
+
+    tags {
+        environment = "Terraform Demo"
     }
 }
 
-resource "azurerm_lb" "tflb" {
-    name = "tfdemo-lb"
-    location = "${var.azurerm_location}"
-    resource_group_name = "${azurerm_resource_group.tfdemo.name}"
+# Generate random text for a unique storage account name
+resource "random_id" "randomId" {
+    keepers = {
+        # Generate a new ID only when a new resource group is defined
+        resource_group = "${azurerm_resource_group.group.name}"
+    }
 
-    frontend_ip_configuration {
-        name = "lbfrontip"
-        public_ip_address_id = "${azurerm_public_ip.publicip.id}"
-        private_ip_address_allocation = "dynamic"
+    byte_length = 8
+}
+
+# Create storage account for boot diagnostics
+resource "azurerm_storage_account" "mystorageaccount" {
+    name                        = "diag${random_id.randomId.hex}"
+    resource_group_name         = "${azurerm_resource_group.group.name}"
+    location                    = "eastus"
+    account_tier                = "Standard"
+    account_replication_type    = "LRS"
+
+    tags {
+        environment = "Terraform Demo"
     }
 }
 
-resource "azurerm_lb_rule" "tflbrule" {
-    name = "tfdemo-lb-rule-80-80"
-    resource_group_name = "${azurerm_resource_group.tfdemo.name}"
-    loadbalancer_id = "${azurerm_lb.tflb.id}"
-    backend_address_pool_id = "${azurerm_lb_backend_address_pool.tfbendpool.id}"
-    probe_id = "${azurerm_lb_probe.tflbprobe.id}"
+# Create virtual machine
+resource "azurerm_virtual_machine" "myterraformvm" {
+    name                  = "myVM"
+    location              = "eastus"
+    resource_group_name   = "${azurerm_resource_group.group.name}"
+    network_interface_ids = ["${azurerm_network_interface.myterraformnic.id}"]
+    vm_size               = "Standard_DS1_v2"
 
-    protocol = "tcp"
-    frontend_port = "80"
-    backend_port = "80"
-    frontend_ip_configuration_name = "lbfrontip"
-
-}
-
-resource "azurerm_lb_probe" "tflbprobe" {
-    name = "tf-health-probe-80"
-    loadbalancer_id = "${azurerm_lb.tflb.id}"
-    resource_group_name = "${azurerm_resource_group.tfdemo.name}"
-    protocol = "http"
-    request_path = "/"
-    port = 80
-}
-
-resource "azurerm_lb_backend_address_pool" "tfbendpool" {
-    name = "tflb-backend-pool"
-    resource_group_name = "${azurerm_resource_group.tfdemo.name}"
-    loadbalancer_id = "${azurerm_lb.tflb.id}"
-}
-
-resource "azurerm_availability_set" "tfavailability" {
-    name = "tf-availability-set"
-    location = "${var.azurerm_location}"
-    resource_group_name = "${azurerm_resource_group.tfdemo.name}"
-}
-
-# Generate random id for the storage account name
-resource "random_id" "storage_account" {
-    prefix = "tf"
-    byte_length = "4"
-}
-
-resource "azurerm_storage_account" "tfstorage" {
-    name = "${lower(random_id.storage_account.hex)}"
-    resource_group_name = "${azurerm_resource_group.tfdemo.name}"
-    location = "${var.azurerm_location}"
-    account_type = "Standard_LRS"
-}
-
-resource "azurerm_storage_container" "container" {
-    count = "${var.azurerm_instances}"
-    name = "tf-storage-container-${count.index}"
-    resource_group_name = "${azurerm_resource_group.tfdemo.name}"
-    storage_account_name = "${azurerm_storage_account.tfstorage.name}"
-}
-
-resource "azurerm_virtual_machine" "tfvm" {
-    count = "${var.azurerm_instances}"
-    name = "tf-vm-${count.index}"
-    location = "${var.azurerm_location}"
-    resource_group_name = "${azurerm_resource_group.tfdemo.name}"
-    network_interface_ids = ["${element(azurerm_network_interface.tfinterface.*.id, count.index)}"]
-    vm_size = "Standard_A0"
-    availability_set_id ="${azurerm_availability_set.tfavailability.id}"
+    storage_os_disk {
+        name              = "myOsDisk"
+        caching           = "ReadWrite"
+        create_option     = "FromImage"
+        managed_disk_type = "Premium_LRS"
+    }
 
     storage_image_reference {
         publisher = "Canonical"
-        offer = "UbuntuServer"
-        sku = "14.04.2-LTS"
-        version = "latest"
+        offer     = "UbuntuServer"
+        sku       = "16.04.0-LTS"
+        version   = "latest"
     }
-
-    storage_os_disk {
-        name = "tf-disk-${count.index}"
-        vhd_uri = "${azurerm_storage_account.tfstorage.primary_blob_endpoint}${element(azurerm_storage_container.container.*.name, count.index)}/mydisk.vhd"
-        caching = "ReadWrite"
-        create_option = "FromImage"
-    }
-
-    delete_os_disk_on_termination = true
-    delete_data_disks_on_termination = true
 
     os_profile {
-        computer_name = "tf-instance-${count.index}"
-        admin_username = "nenad"
-        admin_password = "${var.azurerm_vm_admin_password}"
-        custom_data = "${base64encode(file("${path.module}/templates/install.sh"))}"
+        computer_name  = "myvm"
+        admin_username = "azureuser"
     }
 
-    os_profile_linux_config {
-        disable_password_authentication = false
+    boot_diagnostics {
+        enabled = "true"
+        storage_uri = "${azurerm_storage_account.mystorageaccount.primary_blob_endpoint}"
+    }
+
+    tags {
+        environment = "Terraform Demo"
     }
 }

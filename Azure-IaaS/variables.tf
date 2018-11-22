@@ -16,23 +16,45 @@ variable "azurerm_tenant_id" {
   description = "Azure Tenant ID"
 }
 
-# Define number of VM instances
-variable "azurerm_instances" {
-  type    = "string"
-  default = "3"
+variable "azurerm_resource_group" {
+  description = "Name of resource group"
 }
 
-# Azure reousces variables
+variable "azurerm_resource_tag" {
+  description = "Name of resource group"
+  type        = "string"
+  default     = "test"
+}
+
 variable "azurerm_location" {
-  type    = "string"
+  description = "Resource location"
+  type = "string"
   default = "West Europe"
+}
+
+variable "azurerm_instances" {
+  type    = "string"
+  default = "1"
+}
+
+variable "vnet_name" {
+  type    = "string"
+  default = "1"
+}
+variable "vnet_address_space" {
+  description = "Addres space for Azure VM network"
+  default = "192.168.2.0/24"
+}
+
+variable "vnet_subnet_name" {
+  type    = "string"
+  default = "default"
+}
+variable "vnet_subnet_address_space" {
+  description = "Addres space for Azure VM subnet"
+  default = "192.168.2.0/25"
 }
 
 variable "azurerm_vm_admin_password" {
   description = "Admin password for Azure VMs"
 }
-
-# variable "address_space" {
-#   description = "Addres space for Azure VM network"
-#   default = "192.168.2.0/24"
-# }
