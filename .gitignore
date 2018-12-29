@@ -8,3 +8,7 @@
 
 # Plan files
 *.plan
+
+# Variables
+variables.tf
+*.tfvars

@@ -16,3 +16,11 @@ variable location {
 variable "vm_size" {
     default = "Standard_DS2_v2"
 }
+
+variable "admin_username" {
+  default = "nenad"
+}
+
+variable "admin_password" {
+  default = "DNm11i22-dt3ft"
+}
