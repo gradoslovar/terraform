@@ -5,3 +5,10 @@
 
 # Module directory
 .terraform/
+
+# Plan files
+*.plan
+
+# Variables
+variables.tf
+*.tfvars
