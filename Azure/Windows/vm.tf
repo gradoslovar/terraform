@@ -17,6 +17,8 @@ resource "azurerm_virtual_machine" "demo-vm" {
     offer     = "WindowsServer"
     sku       = "2016-Datacenter"
     version   = "latest"
+    # In case the image is locally baked, instead of above lines - the id of shared image should be specified
+    #id = ""
   }
   storage_os_disk {
     name              = "${var.prefix}-disk"
