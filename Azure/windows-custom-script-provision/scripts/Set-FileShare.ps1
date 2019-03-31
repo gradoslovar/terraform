@@ -12,7 +12,9 @@ param(
 
 $fileShareEndpoint = [string]::Concat($storageName, ".file.core.windows.net")
 $fileShareRoot = [string]::Concat("\\",$fileShareEndpoint, "\", $fileShare)
-$fileShareData = [string]::Concat("C:\\fileshare\", $fileShare)
+if (!(test-path ([string]::Concat("C:\\fileshare\", $fileShare)))) { 
+    New-Item -Path ([string]::Concat("C:\\fileshare\", $fileShare)) -ItemType Directory
+}
 
 cmdkey /add:$fileShareEndpoint /user:$storageName /pass:$storageKey
 
