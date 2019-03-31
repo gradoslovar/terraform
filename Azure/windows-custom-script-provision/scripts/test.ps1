@@ -1,7 +1,7 @@
 [CmdletBinding()]
 param(
-    [parameter(Mandatory=$true)]
-    [string]$folderName,
+    [parameter(Mandatory=$false)]
+    [string]$folderName = "DUDA",
 
     [parameter(Mandatory=$false)]
     [string]$driveLetter = "C"
