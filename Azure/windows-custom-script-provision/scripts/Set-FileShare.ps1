@@ -26,8 +26,9 @@ if ($vmFolder) {
 }
 
 #cmdkey /add:$fileShareEndpoint /user:$storageName /pass:$storageKey
-Invoke-Expression -Command ("cmdkey /add:$($fileShareEndpoint) " + `
-    "/user:AZURE\$($storageName) /pass:$($storageKey)")
+"cmdkey /add:$($fileShareEndpoint) " + "/user:AZURE\$($storageName) /pass:$($storageKey)" | Out-File "C:\Users\nenad\test.txt"
+$HOME | Out-File "C:\Users\nenad\test2.txt"
+Invoke-Expression -Command ("cmdkey /add:$($fileShareEndpoint) " + "/user:AZURE\$($storageName) /pass:$($storageKey)")
 
 New-PSDrive -Name $fileShareDriveLetter -PSProvider FileSystem -Root $fileShareRoot -Persist -Scope Global
 
