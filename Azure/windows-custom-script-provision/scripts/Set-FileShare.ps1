@@ -25,6 +25,9 @@ if ($vmFolder) {
     $fileShareFolder = [string]::Concat("C:\", $fileShareName)
 }
 
+$txt = [string]::Concat("/add:",$fileShareEndpoint," /user:",$storageName," /pass:",$storageKey)
+$txt | Out-File "C:\Users\nenad\Desktop\test.txt"
+
 cmdkey /add:$fileShareEndpoint /user:$storageName /pass:$storageKey
 
 New-PSDrive -Name $fileShareDriveLetter -PSProvider FileSystem -Root $fileShareRoot -Persist -Scope Global
