@@ -87,15 +87,16 @@ resource "azurerm_virtual_machine_extension" "test" {
 
   settings = <<SETTINGS
 {
-  "fileUris": ["scripts/Set-LabVm.ps1"]
+  "fileUris": ["https://raw.githubusercontent.com/gradoslovar/terraform/develop/Azure/windows-custom-script-provision/scripts/test.ps1"],
+  "commandToExecute": "powershell test.ps1 -folderName DUDA"
 }
 SETTINGS
 
 
-  protected_settings = <<SETTINGS
- {
-   "commandToExecute": "powershell Set-LabVm.ps1"
- }
-SETTINGS
+#   protected_settings = <<SETTINGS
+#  {
+#    ""
+#  }
+# SETTINGS
 }
 
