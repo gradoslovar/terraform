@@ -25,10 +25,12 @@ if ($vmFolder) {
     $fileShareFolder = [string]::Concat("C:\", $fileShareName)
 }
 
+
 #cmdkey /add:$fileShareEndpoint /user:$storageName /pass:$storageKey
-"cmdkey /add:$($fileShareEndpoint) " + "/user:AZURE\$($storageName) /pass:$($storageKey)" | Out-File "C:\Users\nenad\test.txt"
-$HOME | Out-File "C:\Users\nenad\test2.txt"
-Invoke-Expression -Command ("cmdkey /add:$($fileShareEndpoint) " + "/user:AZURE\$($storageName) /pass:$($storageKey)")
+$argumentList = "cmdkey /add:$($fileShareEndpoint) " + "/user:AZURE\$($storageName) /pass:$($storageKey)"
+$password = ConvertTo-SecureString -String "DNm11i22-dt3ft" -AsPlainText -Force
+$credential = New-Object System.Management.Automation.PSCredential -ArgumentList "nenad", $password
+Start-Process -FilePath PowerShell.exe -Credential $credential -LoadUserProfile -ArgumentList $argumentList
 
 New-PSDrive -Name $fileShareDriveLetter -PSProvider FileSystem -Root $fileShareRoot -Persist -Scope Global
 
