@@ -55,17 +55,12 @@ resource "azurerm_virtual_machine" "vm" {
     computer_name  = "machine"
     admin_username = "${var.vm_admin_username}"
     admin_password = "${var.vm_admin_password}"
-    #custom_data    = "${local.custom_data_content}"
   }
 
   boot_diagnostics {
     enabled = true
     storage_uri = "${azurerm_storage_account.storage.primary_blob_endpoint}"
   }
-
-  # winrm {
-  #   protocol = "HTTP"
-  # }
 
   os_profile_windows_config {
     provision_vm_agent        = true
@@ -77,9 +72,9 @@ resource "azurerm_virtual_machine_extension" "test" {
   name                       = "test"
   resource_group_name        = "${azurerm_resource_group.rg.name}"
   location                   = "${azurerm_resource_group.rg.location}"
-  virtual_machine_name       = "${azurerm_virtual_machine.dc-vm.name}"
-  publisher                  = "Microsoft.Azure.Extensions"
-  type                       = "CustomScript"
+  virtual_machine_name       = "${azurerm_virtual_machine.vm.name}"
+  publisher                  = "Microsoft.Compute"
+  type                       = "CustomScriptExtension"
   type_handler_version       = "1.9"
   auto_upgrade_minor_version = true
   depends_on                 = ["azurerm_virtual_machine.vm"]
@@ -87,16 +82,14 @@ resource "azurerm_virtual_machine_extension" "test" {
 
   settings = <<SETTINGS
 {
-  "fileUris": ["https://raw.githubusercontent.com/gradoslovar/terraform/develop/Azure/windows-custom-script-provision/scripts/test.ps1"],
-  "commandToExecute": "powershell test.ps1 -folderName DUDA"
+  "fileUris": ["https://raw.githubusercontent.com/gradoslovar/terraform/develop/Azure/windows-custom-script-provision/scripts/Set-FileShare.ps1"]
 }
 SETTINGS
 
 
-#   protected_settings = <<SETTINGS
-#  {
-#    ""
-#  }
-# SETTINGS
+  protected_settings = <<SETTINGS
+ {
+   "commandToExecute": "powershell -ExecutionPolicy Unrestricted -File Set-FileShare.ps1 -storageName \"${var.prefix}afadstorage\" -storageKey \"${azurerm_storage_account.storage.primary_access_key}\" -fileShareName \"${var.file_share_name}\""
+ }
+SETTINGS
 }
-
