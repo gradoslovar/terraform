@@ -32,10 +32,7 @@ net use K: $fileShareRoot /user:$storageName $storageKey /persistent:yes
 
 cmd /c "mklink /D $fileShareFolder $fileShareRoot"
 
-$bat = @"
+@"
 @echo off
 net use ${fileShareDriveLetter}: $fileShareRoot /u:$storageName $storageKey /persistent:yes
-"@
-mkdir c:\TESTIRAM
-New-Item -ItemType File -Path c:\TESTIRAM\test.bat
-$bat | Out-File c:\testiram\test.bat
+"@ | Out-File C:\ProgramData\Microsoft\Windows\Start Menu\Programs\StartUp\attachdrive.bat -Encoding ascii
