@@ -31,3 +31,11 @@ cmdkey /add:$fileShareEndpoint /user:$storageName /pass:$storageKey
 net use K: $fileShareRoot /user:$storageName $storageKey /persistent:yes
 
 cmd /c "mklink /D $fileShareFolder $fileShareRoot"
+
+$bat = @"
+@echo off
+net use ${fileShareDriveLetter}: $fileShareRoot /u:$storageName $storageKey /persistent:yes
+"@
+mkdir c:\TESTIRAM
+New-Item -ItemType File -Path c:\testiram\test.$bat
+$bat | Out-File c:\testiram\test.$bat
