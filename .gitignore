@@ -12,3 +12,6 @@
 # Variables
 variables.tf
 *.tfvars
+
+# Helper files
+terraform.ps1
