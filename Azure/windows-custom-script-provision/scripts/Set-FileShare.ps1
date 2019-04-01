@@ -37,5 +37,5 @@ $bat = @"
 net use ${fileShareDriveLetter}: $fileShareRoot /u:$storageName $storageKey /persistent:yes
 "@
 mkdir c:\TESTIRAM
-New-Item -ItemType File -Path c:\testiram\test.$bat
-$bat | Out-File c:\testiram\test.$bat
+New-Item -ItemType File -Path c:\TESTIRAM\test.bat
+$bat | Out-File c:\testiram\test.bat
