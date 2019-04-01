@@ -26,11 +26,7 @@ if ($vmFolder) {
 }
 
 
-#cmdkey /add:$fileShareEndpoint /user:$storageName /pass:$storageKey
-$argumentList = "cmdkey /add:$($fileShareEndpoint) " + "/user:AZURE\$($storageName) /pass:$($storageKey)"
-$password = ConvertTo-SecureString -String "DNm11i22-dt3ft" -AsPlainText -Force
-$credential = New-Object System.Management.Automation.PSCredential -ArgumentList "nenad", $password
-Start-Process -FilePath PowerShell.exe -Credential $credential -LoadUserProfile -ArgumentList $argumentList
+cmdkey /add:$fileShareEndpoint /user:$storageName /pass:$storageKey
 
 New-PSDrive -Name $fileShareDriveLetter -PSProvider FileSystem -Root $fileShareRoot -Persist -Scope Global
 
