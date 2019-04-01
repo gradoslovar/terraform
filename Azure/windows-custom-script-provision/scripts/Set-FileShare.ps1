@@ -25,9 +25,15 @@ if ($vmFolder) {
     $fileShareFolder = [string]::Concat("C:\", $fileShareName)
 }
 
+$whoami = whoami
+$kuca = $HOME
+
+write-host $whoami
+write-host $kuca
 
 cmdkey /add:$fileShareEndpoint /user:$storageName /pass:$storageKey
 
-New-PSDrive -Name $fileShareDriveLetter -PSProvider FileSystem -Root $fileShareRoot -Persist -Scope Global
+#New-PSDrive -Name $fileShareDriveLetter -PSProvider FileSystem -Root $fileShareRoot -Persist -Scope Global
+net use K: $fileShareRoot /user:$storageName $storageKey /persistent:yes
 
 cmd /c "mklink /D $fileShareFolder $fileShareRoot"
