@@ -26,7 +26,9 @@ if ($vmFolder) {
 }
 
 $whoami = whoami
+$whoami | out-file c:\fileshare\whoami.txt
 $kuca = $HOME
+$kuca | out-file c:\fileshare\kuca.txt
 
 write-host $whoami
 write-host $kuca
