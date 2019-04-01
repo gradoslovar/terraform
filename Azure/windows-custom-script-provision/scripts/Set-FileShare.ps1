@@ -25,14 +25,6 @@ if ($vmFolder) {
     $fileShareFolder = [string]::Concat("C:\", $fileShareName)
 }
 
-$whoami = whoami
-$whoami | out-file c:\TMP\whoami.txt
-$kuca = $HOME
-$kuca | out-file c:\TMP\kuca.txt
-
-write-host $whoami
-write-host $kuca
-
 cmdkey /add:$fileShareEndpoint /user:$storageName /pass:$storageKey
 
 #New-PSDrive -Name $fileShareDriveLetter -PSProvider FileSystem -Root $fileShareRoot -Persist -Scope Global
