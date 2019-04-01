@@ -28,7 +28,7 @@ if ($vmFolder) {
 cmdkey /add:$fileShareEndpoint /user:$storageName /pass:$storageKey
 
 #New-PSDrive -Name $fileShareDriveLetter -PSProvider FileSystem -Root $fileShareRoot -Persist -Scope Global
-net use K: $fileShareRoot /user:$storageName $storageKey /persistent:yes
+net use ${fileShareDriveLetter}: $fileShareRoot /user:$storageName $storageKey /persistent:yes
 
 cmd /c "mklink /D $fileShareFolder $fileShareRoot"
 
