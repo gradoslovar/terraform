@@ -16,12 +16,12 @@ resource "azurerm_subnet" "subnet" {
   resource_group_name       = "${azurerm_resource_group.rg.name}"
   address_prefix            = "${var.subnet_address_prefix}"
   virtual_network_name      = "${azurerm_virtual_network.vnet.name}"
-  network_security_group_id = "${azurerm_network_security_group.domain-nsg.id}"
+  network_security_group_id = "${azurerm_network_security_group.nsg.id}"
 }
 
 # Create NSG
-resource "azurerm_network_security_group" "domain-nsg" {
-  name                = "${var.prefix}-domain-nsg"
+resource "azurerm_network_security_group" "nsg" {
+  name                = "${var.prefix}-nsg"
   location            = "${azurerm_resource_group.rg.location}"
   resource_group_name = "${azurerm_resource_group.rg.name}"
 
@@ -61,5 +61,5 @@ resource "azurerm_network_security_group" "domain-nsg" {
 #       field from the azurerm_subnet resource such that this resource is used to link resources in future.
 resource "azurerm_subnet_network_security_group_association" "nsg-association" {
   subnet_id                 = "${azurerm_subnet.subnet.id}"
-  network_security_group_id = "${azurerm_network_security_group.domain-nsg.id}"
+  network_security_group_id = "${azurerm_network_security_group.nsg.id}"
 }

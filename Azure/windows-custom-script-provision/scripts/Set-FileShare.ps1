@@ -25,14 +25,12 @@ if ($vmFolder) {
     $fileShareFolder = [string]::Concat("C:\", $fileShareName)
 }
 
-cmdkey /add:$fileShareEndpoint /user:$storageName /pass:$storageKey
-
-#New-PSDrive -Name $fileShareDriveLetter -PSProvider FileSystem -Root $fileShareRoot -Persist -Scope Global
-net use ${fileShareDriveLetter}: $fileShareRoot /user:$storageName $storageKey /persistent:yes
-
-cmd /c "mklink /D $fileShareFolder $fileShareRoot"
-
+# Create batch file
 @"
 @echo off
-net use ${fileShareDriveLetter}: $fileShareRoot /u:$storageName $storageKey /persistent:yes
+cmdkey /add:$fileShareEndpoint /user:$storageName /pass:$storageKey
+net use ${fileShareDriveLetter}: $fileShareRoot
 "@ | Out-File "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\StartUp\attachdrive.bat" -Encoding ascii
+
+# Create symobolic link
+cmd /c "mklink /D $fileShareFolder $fileShareRoot"

@@ -6,7 +6,7 @@ resource "azurerm_public_ip" "vm-ip" {
   allocation_method   = "Static"
 
   tags {
-    env = "Test"
+    environmnet = "${var.environment}"
   }
 }
 
@@ -24,7 +24,7 @@ resource "azurerm_network_interface" "vm-nic" {
   }
 
   tags {
-    env = "Test"
+    environmnet = "${var.environment}"
   }
 }
 
@@ -82,14 +82,16 @@ resource "azurerm_virtual_machine_extension" "test" {
 
   settings = <<SETTINGS
 {
-  "fileUris": ["https://raw.githubusercontent.com/gradoslovar/terraform/develop/Azure/windows-custom-script-provision/scripts/Set-FileShare.ps1"]
+  "fileUris": ["https://grenier.blob.core.windows.net/scripts/Set-FileShare.ps1"]
 }
 SETTINGS
 
 
   protected_settings = <<SETTINGS
  {
-   "commandToExecute": "powershell -ExecutionPolicy Unrestricted -File Set-FileShare.ps1 -storageName \"${var.prefix}afadstorage\" -storageKey \"${azurerm_storage_account.storage.primary_access_key}\" -fileShareName \"${var.file_share_name}\""
+   "commandToExecute": "powershell -ExecutionPolicy Unrestricted -File Set-FileShare.ps1 -storageName \"${var.prefix}filestorage\" -storageKey \"${azurerm_storage_account.storage.primary_access_key}\" -fileShareName \"${var.file_share_name}\"",
+   "storageAccountName": "${var.storage_account_name}",
+   "storageAccountKey" : "${var.storage_account_key}"
  }
 SETTINGS
 }
