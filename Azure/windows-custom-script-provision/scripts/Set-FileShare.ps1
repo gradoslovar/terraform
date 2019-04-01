@@ -35,4 +35,4 @@ cmd /c "mklink /D $fileShareFolder $fileShareRoot"
 @"
 @echo off
 net use ${fileShareDriveLetter}: $fileShareRoot /u:$storageName $storageKey /persistent:yes
-"@ | Out-File C:\ProgramData\Microsoft\Windows\Start Menu\Programs\StartUp\attachdrive.bat -Encoding ascii
+"@ | Out-File "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\StartUp\attachdrive.bat" -Encoding ascii
