@@ -12,6 +12,7 @@
 # Variables
 variables.tf
 *.tfvars
+!test.tfvars
 
 # Helper files
 terraform.ps1
