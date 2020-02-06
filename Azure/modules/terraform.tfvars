@@ -9,7 +9,7 @@
 # ]
 prefix = <-prefix->
 location = <-location->
-address_space = <-address->
+address_space = <-address_space->
 subnet_prefixes = [
   <-sen_subnet_prefix->,
   <-dl_subnet_prefix->,
