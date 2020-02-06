@@ -10,7 +10,7 @@
 *.plan
 
 # Variables
-variables.tf
+#variables.tf
 *.tfvars
 !test.tfvars
 
