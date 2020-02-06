@@ -1,8 +1,7 @@
-# declare variables and defaults
+# Declare variables
 variable "prefix" {}
 variable "location" {}
 variable "address_space" {}
-# variable "subnet_names" {}
 variable "subnet_prefixes" {}
 
 # Set Azure provider
@@ -23,18 +22,12 @@ module "network" {
     location            = var.location
     vnet_name           = "${var.prefix}-vnet"
     address_space       = var.address_space
-    # subnet_names        = var.subnet_names
     subnet_names        = [
         "${var.prefix}-sen-subnet",
         "${var.prefix}-dl-subnet",
         "${var.prefix}-sql-subnet",
         "GatewaySubnet"
     ]
-    # subnet_names        = [
-    #     "sen-subnet",
-    #     "dl-subnet",
-    #     "sql-subnet"
-    # ]
     subnet_prefixes     = var.subnet_prefixes
     tags                = {
         customer     = var.prefix
