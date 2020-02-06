@@ -7,12 +7,12 @@
 #   "192.168.101.16/28",
 #   "192.168.101.32/28"
 # ]
-prefix = <-prefix->
-location = <-location->
-address_space = <-address_space->
+prefix = "<-prefix->"
+location = "<-location->"
+address_space = "<-address_space->"
 subnet_prefixes = [
-  <-sen_subnet_prefix->,
-  <-dl_subnet_prefix->,
-  <-sql_subnet_prefix->,
-  <-gw_subnet_prefix->
+  "<-sen_subnet_prefix->",
+  "<-dl_subnet_prefix->",
+  "<-sql_subnet_prefix->",
+  "<-gw_subnet_prefix->"
 ]
