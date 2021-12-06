@@ -45,20 +45,20 @@ stages:
 #           terraform_variable_file: base-lab.tfvars
 # ##############
 
-#       - task: ms-devlabs.custom-terraform-tasks.custom-terraform-installer-task.TerraformInstaller@0
-#         displayName: Install Terraform
-#         inputs:
-#           terraformVersion: 1.0.11
+      - task: ms-devlabs.custom-terraform-tasks.custom-terraform-installer-task.TerraformInstaller@0
+        displayName: Install Terraform
+        inputs:
+          terraformVersion: 1.0.11
 
-#       - task: ms-devlabs.custom-terraform-tasks.custom-terraform-release-task.TerraformTaskV1@0
-#         displayName: Terraform Init
-#         inputs:
-#           workingDirectory: ${{ parameters.terraform_artifacts }}
-#           backendServiceArm: ${{ parameters.global_arm_connection }}
-#           backendAzureRmResourceGroupName: $(terraform_state_storage_rg)
-#           backendAzureRmStorageAccountName: $(terraform_state_storage_account)
-#           backendAzureRmContainerName: $(terraform_state_storage_container)
-#           backendAzureRmKey: ${{ parameters.terraform_state_key }}
+      - task: ms-devlabs.custom-terraform-tasks.custom-terraform-release-task.TerraformTaskV1@0
+        displayName: Terraform Init
+        inputs:
+          workingDirectory: ${{ parameters.terraform_artifacts }}
+          backendServiceArm: ${{ parameters.global_arm_connection }}
+          # backendAzureRmResourceGroupName: $(terraform_state_storage_rg)
+          # backendAzureRmStorageAccountName: $(terraform_state_storage_account)
+          # backendAzureRmContainerName: $(terraform_state_storage_container)
+          # backendAzureRmKey: ${{ parameters.terraform_state_key }}
 
 #       - task: ms-devlabs.custom-terraform-tasks.custom-terraform-release-task.TerraformTaskV1@0
 #         displayName: Terraform Plan
