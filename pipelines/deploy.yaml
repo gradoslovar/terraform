@@ -32,7 +32,7 @@ stages:
         inputs:
           source: specific
           project: $(system.teamProject)
-          pipeline: 51
+          pipeline: 49
           runVersion: latestFromBranch
           runBranch: $(Build.SourceBranch)
           tags: "$(Build.SourceBranchName)"
