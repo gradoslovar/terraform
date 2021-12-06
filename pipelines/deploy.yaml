@@ -67,11 +67,19 @@ stages:
           commandOptions: -out run.plan
           environmentServiceNameAzureRM: ${{ parameters.azure_arm_connection }}
 
-#       - task: ms-devlabs.custom-terraform-tasks.custom-terraform-release-task.TerraformTaskV1@0
-#         displayName: Terraform Validate and Apply
-#         inputs:
-#           command: apply
-#           workingDirectory: ${{ parameters.terraform_artifacts }}
-#           commandOptions: run.plan
-#           environmentServiceNameAzureRM: ${{ parameters.azure_arm_connection }}
-#           backendServiceArm: ${{ parameters.azure_arm_connection }}
+      - pwsh: |
+          Get-ChildItem
+        workingDirectory: $(Pipeline.Workspace)/terraform
+
+      - task: ms-devlabs.custom-terraform-tasks.custom-terraform-release-task.TerraformTaskV1@0
+        displayName: Terraform Validate and Apply
+        inputs:
+          command: apply
+          workingDirectory: $(Pipeline.Workspace)/terraform
+          commandOptions: run.plan
+          environmentServiceNameAzureRM: ${{ parameters.azure_arm_connection }}
+          backendServiceArm: ${{ parameters.azure_arm_connection }}
+
+      - pwsh: |
+          Get-ChildItem
+        workingDirectory: $(Pipeline.Workspace)/terraform
