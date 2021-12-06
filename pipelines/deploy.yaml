@@ -53,10 +53,10 @@ stages:
         inputs:
           workingDirectory: $(Pipeline.Workspace)/tf-base-saas-lab
           backendServiceArm: ${{ parameters.azure_arm_connection }}
-          # backendAzureRmResourceGroupName: $(terraform_state_storage_rg)
-          # backendAzureRmStorageAccountName: $(terraform_state_storage_account)
-          # backendAzureRmContainerName: $(terraform_state_storage_container)
-          # backendAzureRmKey: ${{ parameters.terraform_state_key }}
+          backendAzureRmResourceGroupName: storage
+          backendAzureRmStorageAccountName: multipraktik
+          backendAzureRmContainerName: terraform
+          backendAzureRmKey: test.tfstate
 
 #       - task: ms-devlabs.custom-terraform-tasks.custom-terraform-release-task.TerraformTaskV1@0
 #         displayName: Terraform Plan
