@@ -42,51 +42,58 @@ stages:
         inputs:
           terraformVersion: 1.0.11
 
-      # - task: ms-devlabs.custom-terraform-tasks.custom-terraform-release-task.TerraformTaskV1@0
-      #   displayName: Terraform Init
-      #   inputs:
-      #     workingDirectory: $(Pipeline.Workspace)/terraform
-      #     backendServiceArm: ${{ parameters.azure_arm_connection }}
-      #     backendAzureRmResourceGroupName: storage
-      #     backendAzureRmStorageAccountName: multipraktik
-      #     backendAzureRmContainerName: terraform
-      #     backendAzureRmKey: test.tfstate
+      - task: ms-devlabs.custom-terraform-tasks.custom-terraform-release-task.TerraformTaskV1@0
+        displayName: Terraform Init
+        inputs:
+          workingDirectory: $(Pipeline.Workspace)/terraform
+          backendServiceArm: ${{ parameters.azure_arm_connection }}
+          backendAzureRmResourceGroupName: storage
+          backendAzureRmStorageAccountName: multipraktik
+          backendAzureRmContainerName: terraform
+          backendAzureRmKey: test.tfstate
 
-      # - task: ms-devlabs.custom-terraform-tasks.custom-terraform-release-task.TerraformTaskV1@0
-      #   displayName: Terraform Plan
-      #   inputs:
-      #     command: plan
-      #     workingDirectory: $(Pipeline.Workspace)/terraform
-      #     # commandOptions: --var-file ${{ parameters.terraform_variable_file }} -out run.plan
-      #     commandOptions: -out run.plan
-      #     environmentServiceNameAzureRM: ${{ parameters.azure_arm_connection }}
+      - task: ms-devlabs.custom-terraform-tasks.custom-terraform-release-task.TerraformTaskV1@0
+        displayName: Terraform Plan
+        inputs:
+          command: plan
+          workingDirectory: $(Pipeline.Workspace)/terraform
+          # commandOptions: --var-file ${{ parameters.terraform_variable_file }} -out run.plan
+          commandOptions: -out run.plan
+          environmentServiceNameAzureRM: ${{ parameters.azure_arm_connection }}
 
-      # - pwsh: |
-      #     Get-ChildItem
-      #   workingDirectory: $(Pipeline.Workspace)/terraform
-
-      # - task: ms-devlabs.custom-terraform-tasks.custom-terraform-release-task.TerraformTaskV1@0
-      #   name: terraformApply
-      #   displayName: Terraform Validate and Apply
-      #   inputs:
-      #     command: apply
-      #     workingDirectory: $(Pipeline.Workspace)/terraform
-      #     commandOptions: run.plan
-      #     environmentServiceNameAzureRM: ${{ parameters.azure_arm_connection }}
-      #     backendServiceArm: ${{ parameters.azure_arm_connection }}
-
-      # - pwsh: |
-      #     Get-ChildItem
-      #   workingDirectory: $(Pipeline.Workspace)/terraform
-
-      # - pwsh: |
-      #     Get-Content "$(terraformApply.jsonOutputVariablesPath)"
-      #   workingDirectory: $(Pipeline.Workspace)/terraform
-
-      # - pwsh: |
-      #     Get-Content "$(terraformApply.jsonOutputVariablesPath)" | ConvertFrom-Json
-      #   workingDirectory: $(Pipeline.Workspace)/terraform
+      - task: ms-devlabs.custom-terraform-tasks.custom-terraform-release-task.TerraformTaskV1@0
+        name: terraformApply
+        displayName: Terraform Validate and Apply
+        inputs:
+          command: apply
+          workingDirectory: $(Pipeline.Workspace)/terraform
+          commandOptions: run.plan
+          environmentServiceNameAzureRM: ${{ parameters.azure_arm_connection }}
+          backendServiceArm: ${{ parameters.azure_arm_connection }}
 
       - pwsh: |
-          terraform version
+          $test1 = (Get-Content "$(terraformApply.jsonOutputVariablesPath)" | ConvertFrom-Json).vnet_name.value
+          Write-Host "##vso[task.setvariable variable=var1;]$test1"
         workingDirectory: $(Pipeline.Workspace)/terraform
+
+      - pwsh: |
+          "$var1"
+        displayName: Print Var1
+
+      - pwsh: |
+          $test2 = terraform output -raw vnet_name
+          Write-Host "##vso[task.setvariable variable=var2;]$test2"
+        workingDirectory: $(Pipeline.Workspace)/terraform
+
+      - pwsh: |
+          "$var2"
+        displayName: Print Var2
+
+      - pwsh: |
+          $test3 = (terraform output -json | ConvertFrom-Json).vnet_name.value
+          Write-Host "##vso[task.setvariable variable=var3;]$test3"
+        workingDirectory: $(Pipeline.Workspace)/terraform
+
+      - pwsh: |
+          "$var3"
+        displayName: Print Var3
