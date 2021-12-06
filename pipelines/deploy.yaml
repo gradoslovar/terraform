@@ -58,13 +58,14 @@ stages:
           backendAzureRmContainerName: terraform
           backendAzureRmKey: test.tfstate
 
-#       - task: ms-devlabs.custom-terraform-tasks.custom-terraform-release-task.TerraformTaskV1@0
-#         displayName: Terraform Plan
-#         inputs:
-#           command: plan
-#           workingDirectory: ${{ parameters.terraform_artifacts }}
-#           commandOptions: --var-file ${{ parameters.terraform_variable_file }} -out run.plan
-#           environmentServiceNameAzureRM: ${{ parameters.azure_arm_connection }}
+      - task: ms-devlabs.custom-terraform-tasks.custom-terraform-release-task.TerraformTaskV1@0
+        displayName: Terraform Plan
+        inputs:
+          command: plan
+          workingDirectory: $(Pipeline.Workspace)/terraform
+          # commandOptions: --var-file ${{ parameters.terraform_variable_file }} -out run.plan
+          commandOptions: -out run.plan
+          environmentServiceNameAzureRM: ${{ parameters.azure_arm_connection }}
 
 #       - task: ms-devlabs.custom-terraform-tasks.custom-terraform-release-task.TerraformTaskV1@0
 #         displayName: Terraform Validate and Apply
