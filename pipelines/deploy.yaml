@@ -77,7 +77,7 @@ stages:
         workingDirectory: $(Pipeline.Workspace)/terraform
 
       - pwsh: |
-          "$var1"
+          "$(var1)"
         displayName: Print Var1
 
       - pwsh: |
@@ -86,7 +86,7 @@ stages:
         workingDirectory: $(Pipeline.Workspace)/terraform
 
       - pwsh: |
-          "$var2"
+          "$(var2)"
         displayName: Print Var2
 
       - pwsh: |
@@ -95,5 +95,5 @@ stages:
         workingDirectory: $(Pipeline.Workspace)/terraform
 
       - pwsh: |
-          "$var3"
+          "$(var3)"
         displayName: Print Var3
