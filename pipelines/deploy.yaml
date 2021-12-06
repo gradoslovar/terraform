@@ -1,8 +1,6 @@
 trigger: none
 pr: none
 
-name: ${{ parameters.global_customer_id }}-$(Date:yyMMdd)$(Rev:.r)
-
 pool:
   vmImage: ubuntu-20.04
 
