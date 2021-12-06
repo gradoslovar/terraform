@@ -11,7 +11,7 @@ parameters:
 - name: azure_arm_connection
   displayName: Subscription
   values:
-  - alsid_global_devops_test
+  - vse-biz-spark-nenad
 
 variables:
 - name: foo
