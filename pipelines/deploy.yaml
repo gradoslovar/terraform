@@ -51,7 +51,7 @@ stages:
       - task: ms-devlabs.custom-terraform-tasks.custom-terraform-release-task.TerraformTaskV1@0
         displayName: Terraform Init
         inputs:
-          workingDirectory: $(Pipeline.Workspace)/tf-base-saas-lab
+          workingDirectory: $(Pipeline.Workspace)/terraform
           backendServiceArm: ${{ parameters.azure_arm_connection }}
           backendAzureRmResourceGroupName: storage
           backendAzureRmStorageAccountName: multipraktik
