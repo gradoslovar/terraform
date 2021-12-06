@@ -2,7 +2,7 @@ trigger: none
 pr: none
 
 pool:
-  vmImage: ubuntu-20.04
+  vmImage: windows-2019
 
 parameters:
 - name: foo
@@ -72,6 +72,7 @@ stages:
         workingDirectory: $(Pipeline.Workspace)/terraform
 
       - task: ms-devlabs.custom-terraform-tasks.custom-terraform-release-task.TerraformTaskV1@0
+        name: terraformApply
         displayName: Terraform Validate and Apply
         inputs:
           command: apply
@@ -82,4 +83,8 @@ stages:
 
       - pwsh: |
           Get-ChildItem
+        workingDirectory: $(Pipeline.Workspace)/terraform
+
+      - pwsh: |
+          Get-Content "$(terraformApply.jsonOutputVariablesPath)" | ConvertFrom-Json
         workingDirectory: $(Pipeline.Workspace)/terraform
