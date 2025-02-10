@@ -1,0 +1,99 @@
+trigger: none
+pr: none
+
+pool:
+  vmImage: windows-2019
+
+parameters:
+- name: foo
+  default: bar
+
+- name: azure_arm_connection
+  displayName: Subscription
+  values:
+  - vse-biz-spark-nenad
+
+variables:
+- name: foo
+  value: ${{ parameters.foo }}
+
+stages:
+  - stage: DeployTerraform
+    # pool:
+    #   vmImage: windows-2019
+    dependsOn: []
+    jobs:
+    - job: DeployTF
+      steps:
+      - task: DownloadPipelineArtifact@2
+        displayName: Download
+        inputs:
+          source: specific
+          project: $(system.teamProject)
+          pipeline: 49
+          runVersion: latestFromBranch
+          runBranch: $(Build.SourceBranch)
+          tags: "$(Build.SourceBranchName)"
+          artifact: terraform
+          path: $(Pipeline.Workspace)/terraform
+
+      - task: ms-devlabs.custom-terraform-tasks.custom-terraform-installer-task.TerraformInstaller@0
+        displayName: Install Terraform
+        inputs:
+          terraformVersion: 1.0.11
+
+      - task: ms-devlabs.custom-terraform-tasks.custom-terraform-release-task.TerraformTaskV1@0
+        displayName: Terraform Init
+        inputs:
+          workingDirectory: $(Pipeline.Workspace)/terraform
+          backendServiceArm: ${{ parameters.azure_arm_connection }}
+          backendAzureRmResourceGroupName: storage
+          backendAzureRmStorageAccountName: multipraktik
+          backendAzureRmContainerName: terraform
+          backendAzureRmKey: test.tfstate
+
+      - task: ms-devlabs.custom-terraform-tasks.custom-terraform-release-task.TerraformTaskV1@0
+        displayName: Terraform Plan
+        inputs:
+          command: plan
+          workingDirectory: $(Pipeline.Workspace)/terraform
+          # commandOptions: --var-file ${{ parameters.terraform_variable_file }} -out run.plan
+          commandOptions: -out run.plan
+          environmentServiceNameAzureRM: ${{ parameters.azure_arm_connection }}
+
+      - task: ms-devlabs.custom-terraform-tasks.custom-terraform-release-task.TerraformTaskV1@0
+        name: terraformApply
+        displayName: Terraform Validate and Apply
+        inputs:
+          command: apply
+          workingDirectory: $(Pipeline.Workspace)/terraform
+          commandOptions: run.plan
+          environmentServiceNameAzureRM: ${{ parameters.azure_arm_connection }}
+          backendServiceArm: ${{ parameters.azure_arm_connection }}
+
+      - pwsh: |
+          $test1 = (Get-Content "$(terraformApply.jsonOutputVariablesPath)" | ConvertFrom-Json).vnet_name.value
+          Write-Host "##vso[task.setvariable variable=var1;]$test1"
+        workingDirectory: $(Pipeline.Workspace)/terraform
+
+      - pwsh: |
+          "$(var1)"
+        displayName: Print Var1
+
+      - pwsh: |
+          $test2 = terraform output -raw vnet_name
+          Write-Host "##vso[task.setvariable variable=var2;]$test2"
+        workingDirectory: $(Pipeline.Workspace)/terraform
+
+      - pwsh: |
+          "$(var2)"
+        displayName: Print Var2
+
+      - pwsh: |
+          $test3 = (terraform output -json | ConvertFrom-Json).vnet_name.value
+          Write-Host "##vso[task.setvariable variable=var3;]$test3"
+        workingDirectory: $(Pipeline.Workspace)/terraform
+
+      - pwsh: |
+          "$(var3)"
+        displayName: Print Var3

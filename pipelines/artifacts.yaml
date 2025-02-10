@@ -1,0 +1,25 @@
+trigger: none
+pr: none
+
+jobs:
+- job: PublishTF
+  pool: 
+    vmImage: ubuntu-20.04
+  steps:
+  - task: CopyFiles@2
+    displayName: Copy TF
+    inputs:
+      SourceFolder: Azure/test
+      Contents: |
+        main.tf
+        variables.tf
+        outputs.tf
+      TargetFolder: $(Build.ArtifactStagingDirectory)
+
+  - publish: $(Build.ArtifactStagingDirectory)
+    artifact: terraform
+    displayName: Publish Artifacts
+
+  - pwsh: |
+      Write-Host "##vso[build.addbuildtag]$(Build.SourceBranchName)"
+    displayName: Tag Artifacts

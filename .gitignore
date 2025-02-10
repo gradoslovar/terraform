@@ -10,8 +10,9 @@
 *.plan
 
 # Variables
-variables.tf
+#variables.tf
 *.tfvars
+!terraform.tfvars
 
 # Helper files
 terraform.ps1
