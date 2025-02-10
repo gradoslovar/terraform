@@ -1,0 +1,14 @@
+name: Hello World Action
+
+on:
+  workflow_dispatch:
+
+jobs:
+  hello_world_job:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Print Hello World
+      shell: pwsh
+      run: |
+        Write-Output "Hello World"
